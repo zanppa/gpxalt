@@ -1,0 +1,2 @@
+# Prevent the api key from leaking to GIT
+api_key
