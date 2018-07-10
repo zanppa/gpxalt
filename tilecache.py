@@ -2,7 +2,7 @@
 """
 Created on Sat Jun 23 14:09:59 2018
 
-@author: Raksunaksu
+@author: Zan
 """
 
 import coordinates.coordinates as coord
