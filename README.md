@@ -1,19 +1,19 @@
 # gpxalt
 A simple program to replace GPX track altitudes with accurate altitude data of National Land Survey of Finland.
 
-Note that this program only works for tracks that are inside Finnish borderd.
+Note that this program only works for tracks that are inside Finnish borders.
 
 ## Background
 Since at least 2014 the National Land Survey of Finland (NLS, Maanmittauslaitos) has opened up lots of their 
-data, including the laser scanned elevation data. There is elevation data for whole Finaldn with [10 m grid](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/elevation-model-10-m), 
-and part of Finland also has [2m grid](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/elevation-model-2-m). The first has accuracy of 1.4 m while the second has 0.3 m accuracy.
+data, including the laser scanned elevation data. There is elevation data for whole Finland with [10 m grid](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/elevation-model-10-m), 
+and part of Finland also has [2m grid](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/elevation-model-2-m). The first has altitude accuracy of 1.4 m while the second has 0.3 m accuracy.
 
-Because Finland is so close to the North Pole, the GPS elevation accuracy is very low. to increase the accuracy, 
-I wrote this program to download relevant parts of the elevation data from NLS (the data is only available in tiles) 
-and use that to replace the inaccurate elevation data of the GPX track with more accurate measured one.
+Because Finland is so close to the North Pole, the GPS elevation accuracy is very low. To increase the altitude accuracy 
+in the GPS tracks, I wrote this program to download relevant parts of the elevation data from NLS (the data is only 
+available in tiles) and use those to replace the inaccurate elevation data of the GPX track with more accurate measured one.
 
 ## Getting started
-This program is written in Python 2.7. It uses some external libraries, and I've included two in the repository.
+This program is written in Python 2.7. It uses some external libraries, and I've included two necessary ones in the repository.
 
 ### Prerequisites
 This program needs following external libraries:
@@ -28,7 +28,9 @@ They can all be installed with ```pip```.
 ### Running the program
 First you need to get an API key to the file service of NLS: [Link to the order page](https://tiedostopalvelu.maanmittauslaitos.fi/tp/mtp/tilaus?lang=en).
 
-After you get the key, create a file called ```api_key``` inside the repository and place the key there.
+After you get the key, create a file called ```api_key``` inside the repository and place the key there (Note: it is 
+also possible to provide the key with command line argument if preferred).
+
 Then simply run the following command inside the repository root:
 ```
 python gpxalt.py /path/to/your/track.gpx
@@ -39,7 +41,7 @@ The final altitude corrected file will be named in the working directory as ```t
 (if the original was ```track.gpx```).
 
 ### Parameters
-The full command line is as follows:
+The full list of command line arguments is:
 ```
 usage: gpxalt.py [-h] [--api-key API_KEY] [--cache CACHE] [-v] input [output]
 
@@ -53,10 +55,10 @@ optional arguments:
   --cache CACHE      path to the cache folder, default: .\cache\
   -v, --verbose      verbose output, add multiple for more info
 ```
-It should be noted that if ```--api-key``` is not used, the program tries to load the key from a file called ```api_key```.
+If ```--api-key``` is not used, the program tries to load the key from a file called ```api_key```.
 
 ### Known bugs
-With some track the gpx parser dies to an exception about stripping a Nonetype, I'm not sure why this happens...
+With some tracks the gpx parser dies to an exception about stripping a Nonetype, I'm not sure why this happens...
 
 ## Comparison
 I made few comparisons of the laser scanned data and other sources.
