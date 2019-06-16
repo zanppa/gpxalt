@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jun 23 14:10:21 2018
+A python program to read a GPX track and to replace its elevation 
+data with data from National Land Survey of Finland.
 
-@author: Zan
+Copyright (C) 2018, 2019 Lauri Peltonen
 """
 
-import sys
+import sys		# sys.exit
+import os		# os.environ
 import gpxpy
 from tilecache import TileCache
 import argparse
@@ -32,24 +34,28 @@ def fix_gpx_file():
     api_key = None    
     if args.api_key:
         api_key = args.api_key
+    elif 'NLS_API_KEY' in os.environ:
+        # Read api key frome environment variable
+        api_key = os.environ['NLS_API_KEY']
     else:
+		# Read api key from file
         try:
-            with file('api_key') as f:
+            with open('api_key') as f:
                 api_key = f.read()
             api_key = api_key.strip()
         except:
             api_key = None
             
     if not api_key:
-        print "Warning! No api key provided, cannot download new tiles."
-        print "Can only use the tiles already downloaded to cache."
-        print
+        print("Warning! No api key provided, cannot download new tiles.")
+        print("Can only use the tiles already downloaded to cache.")
+        print()
         
     if args.verbose > 0:
-        print "Input file:", input_file
-        print "Output file:", output_file
+        print("Input file:", input_file)
+        print("Output file:", output_file)
         if args.verbose > 1:
-            print "Api key:", api_key        
+            print("Api key:", api_key)     
         
     cache = TileCache(api_key=api_key, verbose=args.verbose)
 
@@ -63,7 +69,7 @@ def fix_gpx_file():
                     if new_alt:
                         point.elevation = new_alt
     except IOError:
-        print "Error! Could not open input file:", input_file
+        print("Error! Could not open input file:", input_file)
         sys.exit(-1)
 
 
@@ -72,8 +78,8 @@ def fix_gpx_file():
         with open(output_file, 'w') as output_f:
             output_f.write(gpx.to_xml())
     except IOError:
-        print "Error while writing output file:", output_file
-        print "Disk full or write protected?"
+        print("Error while writing output file:", output_file)
+        print("Disk full or write protected?")
         sys.exit(-1)
 
 
