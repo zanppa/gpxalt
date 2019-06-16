@@ -1,14 +1,14 @@
 # gpxalt
-A simple program to replace GPX track altitudes with accurate altitude data of National Land Survey of Finland.
+A simple program to replace GPX track elevation with accurate elevation data of National Land Survey of Finland.
 
 Note that this program only works for tracks that are inside Finnish borders.
 
 ## Background
 Since at least 2014 the National Land Survey of Finland (NLS, Maanmittauslaitos) has opened up lots of their 
 data, including the laser scanned elevation data. There is elevation data for whole Finland with [10 m grid](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/elevation-model-10-m), 
-and part of Finland also has [2m grid](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/elevation-model-2-m). The first has altitude accuracy of 1.4 m while the second has 0.3 m accuracy.
+and part of Finland also has [2m grid](https://www.maanmittauslaitos.fi/en/maps-and-spatial-data/expert-users/product-descriptions/elevation-model-2-m). The first has elevation accuracy of 1.4 m while the second has 0.3 m accuracy.
 
-Because Finland is so close to the North Pole, the GPS elevation accuracy is very low. To increase the altitude accuracy 
+Because Finland is so close to the North Pole, the GPS elevation accuracy is very low. To increase the elevation accuracy 
 in the GPS tracks, I wrote this program to download relevant parts of the elevation data from NLS (the data is only 
 available in tiles) and use those to replace the inaccurate elevation data of the GPX track with more accurate measured one.
 
@@ -36,8 +36,8 @@ Then simply run the following command inside the repository root:
 python gpxalt.py /path/to/your/track.gpx
 ```
 This will go through the track point-by-point and download relevant tiles from the NLS file server
-and cache them locally to ```./cache/```. From those tiles it will read the laser scanned altitude.
-The final altitude corrected file will be named in the working directory as ```track_altfix.gpx```
+and cache them locally to ```./cache/```. From those tiles it will read the laser scanned elevation.
+The final elevation corrected file will be named in the working directory as ```track_altfix.gpx```
 (if the original was ```track.gpx```).
 
 ### Parameters
@@ -77,7 +77,7 @@ Again the shape is similar but there is much more details in the new graph.
  
  Lately I've got a new watch from Suunto, which has barometer and uses [FusedAlti](https://www.suunto.com/Support/Product-support/suunto_traverse/suunto_traverse/features/fusedalti/) technology to mix barometer and GPS to achieve an accurate elevation profile. I compared a track with that method to the output of this program:
  ![Suunto FusedAlti comparison](https://github.com/zanppa/gpxalt/raw/master/docs/comparison_to_suunto.png)
- It can be seen that in this case both lines are almost on top of each other, which indicates that this program has quite accurate output (typically barometer altitude is rather accurate). Only at the end is slight divergence visible, probably due to changing atmospheric pressure. The start and end elevations should be the same.
+ It can be seen that in this case both lines are almost on top of each other, which indicates that this program has quite accurate output (typically barometer measurement is rather accurate). Only slight divergence is visible, probably due to changing atmospheric pressure. The start and end elevation should be the same.
  
  ## Licenses
  I included the two libraries that I used but were not very simple to find. They have their own licenses which are
