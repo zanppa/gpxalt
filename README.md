@@ -13,10 +13,10 @@ in the GPS tracks, I wrote this program to download relevant parts of the elevat
 available in tiles) and use those to replace the inaccurate elevation data of the GPX track with more accurate measured one.
 
 ## Getting started
-This program is written in Python 2.7. It uses some external libraries, and I've included two necessary ones in the repository.
+This program is updated to Python 3. It requires some external libraries; two necessary ones are included in the repository.
 
 ### Prerequisites
-This program needs following external libraries:
+Following external libraries are required:
 ```
 numpy
 urllib
@@ -29,7 +29,7 @@ They can all be installed with ```pip```.
 First you need to get an API key to the file service of NLS: [Link to the order page](https://tiedostopalvelu.maanmittauslaitos.fi/tp/mtp/tilaus?lang=en).
 
 After you get the key, create a file called ```api_key``` inside the repository and place the key there (Note: it is 
-also possible to provide the key with command line argument if preferred).
+also possible to provide the key with command line argument or via environment variable if preferred).
 
 Then simply run the following command inside the repository root:
 ```
@@ -55,25 +55,29 @@ optional arguments:
   --cache CACHE      path to the cache folder, default: .\cache\
   -v, --verbose      verbose output, add multiple for more info
 ```
-If ```--api-key``` is not used, the program tries to load the key from a file called ```api_key```.
+If ```--api-key``` is not used, the program tries to read the key from environment variable ```NLS_API_KEY```. If that does not exist, the program tries to load the key from a file called ```api_key```. If no api key is provided, only local cache will be used.
 
 ### Known bugs
 With some tracks the gpx parser dies to an exception about stripping a Nonetype, I'm not sure why this happens...
 
 ## Comparison
-I made few comparisons of the laser scanned data and other sources.
+I made few comparisons of the laser scanned data and other sources. In the graphs, X axis is the gpx track point number and Y axis is the elevation in meters (from sea level, I assume). The ```old``` line is the original elevation from the gpx file and ```new``` line is the result after using this program.
 
-First is a comparison of one of my tracks. Old is the original GPS elevation while new is what this program outputted.
+First is a comparison of one of my tracks using just GPS elevation.
 ![GPS comparison 1](https://github.com/zanppa/gpxalt/raw/master/docs/comparison.png)
-As can be seen, both have similar shape but the new one has much more details.
+As can be seen, both elevatino profiles have similar shape but the new one has much more details.
 
-The second track I first compared with raw GPS elevation data:
+For the second track I first compared the raw GPS elevation to the output of this program:
 ![GPS comparison 2](https://github.com/zanppa/gpxalt/raw/master/docs/comparison_to_gps.png)
-Again the shape is similar but there is much more details in the new one.
+Again the shape is similar but there is much more details in the new graph.
 
- also checked the same track against the elevation fix algorithm (data?) from [Garmin Connect](https://connect.garmin.com):
+ I then applied an elevation fix algorithm (data?) from [Garmin Connect](https://connect.garmin.com) to the track and compared that result:
  ![Garmin comparison](https://github.com/zanppa/gpxalt/raw/master/docs/comparison_to_garmin_fix.png)
  The Garmin fix has quite a bit of offset, and it does not have anywhere near as much detail as this one.
+ 
+ Lately I've got a new watch from Suunto, which has barometer and uses [FusedAlti](https://www.suunto.com/Support/Product-support/suunto_traverse/suunto_traverse/features/fusedalti/) technology to mix barometer and GPS to achieve an accurate elevation profile. I compared a track with that method to the output of this program:
+ ![Suunto FusedAlti comparison](https://github.com/zanppa/gpxalt/raw/master/docs/comparison_to_suunto.png)
+ It can be seen that in this case both lines are almost on top of each other, which indicates that this program has quite accurate output (typically barometer altitude is rather accurate). Only at the end is slight divergence visible, probably due to changing atmospheric pressure. The start and end elevations should be the same.
  
  ## Licenses
  I included the two libraries that I used but were not very simple to find. They have their own licenses which are
