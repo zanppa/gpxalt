@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jun 23 14:09:59 2018
+Read geotiff tiles from National Land Survey of Finland database,
+cache them locally and retrieve elevation data for given points.
 
-@author: Zan
+Copyright (C) 2018, 2019 Lauri Peltonen
 """
 
 import coordinates.coordinates as coord
@@ -42,24 +43,24 @@ def etrs_tile(coords, scale):
     scales = [200000, 100000, 50000, 25000, 10000, 5000]
     
     if coords['type'] != coord.COORD_TYPE_ETRSTM35FIN:
-        print "Wrong coordinate type, must be ETRS-TM35FIN"
+        print("Wrong coordinate type, must be ETRS-TM35FIN")
         return None 
     if not scale in scales:
-        print "Scale not allowed"
+        print("Scale not allowed")
         return None
 
     # Assert coordinate region E: 20000m ... 788000m, N: 6570000m ... 7818000m
     if coords['E'] < 20000:
-        print "Coordinate out of bounds to west"
+        print("Coordinate out of bounds to west")
         return None
     if coords['E'] > 788000:
-        print "Coordinate out of bounds to east"
+        print("Coordinate out of bounds to east")
         return None
     if coords['N'] < 6570000:
-        print "Coordinate out of bounds to south"
+        print("Coordinate out of bounds to south")
         return None
     if coords['N'] > 7818000:
-        print "Coordinate out of bounds to north"
+        print("Coordinate out of bounds to north")
         return None
 
     # 1:500000 leaf
@@ -206,7 +207,7 @@ class TileCache:
         self.verbose = verbose
 
         if verbose > 0:
-            print "Cache path", self.root_path
+            print("Cache path", self.root_path)
 
     
     def altitude(self, N, E):
@@ -257,7 +258,7 @@ class TileCache:
         self.last_global_y = local_coords['N'] - 6570000.0
 
         if self.verbose > 2:
-            print latlon['N'], latlon['E'], "(lat, lon) -->", self.last_global_y, self.last_global_x, " (N, E)"
+            print(latlon['N'], latlon['E'], "(lat, lon) -->", self.last_global_y, self.last_global_x, " (N, E)")
 
         # Get the correct map leaf and coordinates inside it
         (tile, x, y) = etrs_tile(local_coords, scale)     # Geotiff is at 1:10000 level
@@ -278,7 +279,7 @@ class TileCache:
         self.last_y = y
 
         # First check if we have the map in cache?
-        if self.cache.has_key(tile):
+        if tile in self.cache:
             # Use the cached tile directly and return the altitude
 
             # See if we already tried downloading this and failed
@@ -287,7 +288,7 @@ class TileCache:
 
             # Check the array dimensions (corrupted files?)
             if x >= self.cache[tile].shape[0] or y >= self.cache[tile].shape[1]:
-                print "Corrupted tile", tile, "in cache or coordinate error!"
+                print("Corrupted tile", tile, "in cache or coordinate error!")
                 return None
 
             return self.cache[tile][y][x]
@@ -313,21 +314,21 @@ class TileCache:
         
         local_file = self.root_path + tile + '.tif'
         if self.verbose > 0:
-            print "Reading local tile", tile
+            print("Reading local tile", tile)
         if self.verbose > 1:
-            print " from", local_file
+            print(" from", local_file)
     
         try:
             tif = tiff.imread(local_file)
             #print tif.shape
 
         except ValueError as e:
-            print 'Local file error {0}'.format(e.message)
+            print('Local file error {0}'.format(e.message))
             return False
 
         except:
             # File was not found!
-            print 'Unexpected error while reading local file!'
+            print('Unexpected error while reading local file!')
             return False
 
         # File loaded succesfully, add to cache
@@ -346,14 +347,15 @@ class TileCache:
         local_file = self.root_path + tile + '.tif'
 
         if self.verbose > 0:
-            print "Loading remote tile", tile
+            print("Loading remote tile", tile)
         if self.verbose > 1:
-            print " from", remote_file
+            print(" from", remote_file)
         
         try:
-            urllib.urlretrieve(remote_file, filename=local_file)
-        except:
-            print 'Error while retrieving remote tile'
+            urllib.request.urlretrieve(remote_file, filename=local_file)
+        except urllib.error.URLError as e:
+            print('Error while retrieving remote tile')
+            print(e.reason)
             return False
             
         # If succesfully downloaded remote file to local cache, try to read it
